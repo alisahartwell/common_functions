@@ -1,0 +1,26 @@
+# TABLE CREATION SCRIPT
+conn = pyodbc.connect('Driver={SQL Server};'
+                      'Server=S21PVM02.MO.CAMBA.ORG,1433;'
+                      'Database=HomeBase;'
+                      'Trusted_Connection=yes'
+                     )
+
+cursor = conn.cursor()
+
+cursor.execute(
+'''CREATE TABLE CaseManagers
+(ID VARCHAR(50) primary key,
+Name VARCHAR(120),
+Site VARCHAR(120),
+Role VARCHAR(120)
+)''')
+
+insert_to_tbl_stmt = "INSERT INTO CaseManagers values (?, ?, ?, ?)"
+cursor.fast_executemany = True
+cursor.executemany(insert_to_tbl_stmt, cms.values.tolist())
+print(f'{len(cms)} rows inserted to the CaseManager table')
+cursor.commit()
+cursor.close()
+
+conn.commit()
+conn.close()
